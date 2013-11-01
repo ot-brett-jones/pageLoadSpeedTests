@@ -1,6 +1,6 @@
+angular.module('pageLoadTests').controller('AppCtrl', ['$scope','environments', AppCtrl]);
 
-
-function AppCtrl ($scope) {
+function AppCtrl($scope, environments) {
 	var interval, beforeLoad, stop;
 	var iframe = document.getElementById('iframe1');
 
@@ -9,22 +9,7 @@ function AppCtrl ($scope) {
 	$scope.testCount = 5;
 	$scope.campaignId = 3051;
 	$scope.ordinalId = 1;
-
-	$scope.environments = environments = [
-		{
-			"name": "local",
-			"url": "http://localhost:3450/"
-		},
-		{
-			"name": "dev5",
-			"url": "http://spl.vmdevpro-05.onetech.local/"
-		},
-		{
-			"name": "test",
-			"url": "http://spl.ottest.net/"
-		}
-	];
-
+	$scope.environments = environments;
 	$scope.environment = environments[0];
 
 	$scope.startTesting = function() {
