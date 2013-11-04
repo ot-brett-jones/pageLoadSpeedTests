@@ -10,7 +10,7 @@ function AppCtrl($scope, environments) {
 	$scope.campaignId = 3051;
 	$scope.ordinalId = 1;
 	$scope.environments = environments;
-	$scope.environment = environments[0];
+	$scope.environment = environments[0].url;
 
 	$scope.startTesting = function() {
 		$scope.reset();
@@ -37,31 +37,30 @@ function AppCtrl($scope, environments) {
 	};
 
 	$scope.runTest = function() {
-		beforeLoad = (new Date()).getTime();
-		expireCookies();
+		var startTime = (new Date()).getTime();
 
-		var newUrl = (function(){
-			var url = $scope.environment.url + 'EnterCampaign.aspx?id=' + $scope.campaignId;
+		var newUrl = $scope.environment + 'EnterCampaign.aspx?id=' + $scope.campaignId;
 
-			if (!isNaN($scope.ordinalId)) {
-				url += '&ord=' + $scope.ordinalId;
-			}
+		if (!isNaN($scope.ordinalId)) {
+			newUrl += '&ord=' + $scope.ordinalId;
+		}
 
-			return url;
-		})();
-
+		iframe.onload = function() {
+			$scope.pageLoaded(startTime);
+		}
 		iframe.src = newUrl;
 	};
 
-	$scope.pageLoaded = function() {
-	     var now = (new Date()).getTime();
-	     var ms = now - beforeLoad;
-	     $scope.loadingTimes.push(ms);
-	     $scope.$apply();
+	$scope.pageLoaded = function(startTime) {
+		if (stop) return;
+		var now = (new Date()).getTime();
+		var ms = now - startTime;
+		$scope.loadingTimes.push(ms);
+		$scope.$apply();
 
-	     if (($scope.currentTest++ < $scope.testCount) && !stop) {
-	     	$scope.runTest();
-	     }
+		if ($scope.currentTest++ < $scope.testCount) {
+			$scope.runTest();
+		}
 	};
 
 	function expireCookies() {
