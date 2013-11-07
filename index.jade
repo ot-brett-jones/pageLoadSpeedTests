@@ -1,0 +1,49 @@
+html(ng-app='pageLoadTests')
+  head
+    title load time
+    link(href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css", rel="stylesheet")
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+
+  body#mainCtrl(ng-cloak='ng-cloak', ng-controller='AppCtrl')
+    form.form-horizontal(role='form', ng-submit='startTesting()')
+      .form-group
+        label.col-sm-2.control-label(for='environment') Environment
+        .col-sm-1.col-1
+          select.form-control(ng-model='environment', ng-options='env.url as env.name for env in environments', required='required')
+        .col-sm-4.col-4
+          input.form-control(type='text', ng-value='environment')
+      .form-group
+        label.col-sm-2.control-label(for='campaignId') Campaign
+        .col-sm-5.col-5
+          input.form-control(type='text', name='campaignId', ng-model='campaignId', placeholder='2025', required='required')
+      .form-group
+        label.col-sm-2.control-label(for='ordinalId') Ordinal
+        .col-sm-5.col-5
+          input.form-control(type='text', name='ordinalId', ng-model='ordinalId')
+      .form-group
+        label.col-sm-2.control-label(for='testCount') Test Count
+        .col-sm-5.col-5
+          input.form-control(type='number', min='0', max='20', name='testCount', ng-model='testCount')
+      .form-group
+        label.col-sm-2.control-label Test Link
+        .col-sm-5.col-5
+          a(href="{{testLink()}}") {{ testLink() }}
+      .form-group
+        .col-sm-offset-2.col-sm-5.col-offset-2.col-5
+          button.btn.btn-primary(type='submit') Start
+          &nbsp;
+          button.btn.btn-danger(type="button", ng-click='stop=true') Stop
+          &nbsp;
+          button.btn(type="button", ng-click='showIframe=(!showIframe)') Toggle iFrame Visible
+    .col-sm-offset-2
+      div(ng-if='loadingTimes.length', style='font-weight: bold;')
+        | avg: {{average()}}ms
+      ol
+        li(ng-repeat='test in tests track by $index')
+          div {{ test.time }}ms
+          div {{ test.url }}
+      iframe#iframe1.col-sm-6.col-6(ng-show="showIframe" sandbox='allow-top-navigation allow-same-origin', src='')
+
+  script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0-rc.3/angular.min.js')
+  script(type='text/javascript', src='app.js')
+
